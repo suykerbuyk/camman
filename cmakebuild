@@ -1,0 +1,22 @@
+#!/usr/bin/env bash
+
+NINJA=`which ninja`
+if [ $? -ne 0 ]
+then
+	if [[ ! -d build/dbg ]]; then
+	    mkdir -p build/dbg && cd build/dbg && cmake  -DCMAKE_EXPORT_COMPILE_COMMANDS=ON -DCMAKE_BUILD_TYPE=Debug -G "Unix Makefiles" ../.. && cd ../..
+	fi
+	if [[ ! -d build/rel ]]; then
+	    mkdir -p build/rel && cd build/rel && cmake  -DCMAKE_EXPORT_COMPILE_COMMANDS=ON -DCMAKE_BUILD_TYPE=RelWithDebInfo -G "Unix Makefiles" ../.. && cd ../..
+	fi
+	make -C build/dbg && make -C build/rel
+else
+	if [[ ! -d build/dbg ]]; then
+	    mkdir -p build/dbg && cd build/dbg && cmake  -DCMAKE_EXPORT_COMPILE_COMMANDS=ON -DCMAKE_BUILD_TYPE=Debug  -G Ninja ../.. && cd ../..
+	fi
+	if [[ ! -d build/rel ]]; then
+	    mkdir -p build/rel && cd build/rel && cmake  -DCMAKE_EXPORT_COMPILE_COMMANDS=ON -DCMAKE_BUILD_TYPE=RelWithDebInfo  -G Ninja ../.. && cd ../..
+	fi
+	ninja -C build/dbg $@ && ninja -C build/rel $@
+#	ninja -C build/dbg  && ninja -C build/rel
+fi
